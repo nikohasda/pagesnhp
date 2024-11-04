@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSO Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #090371; /* Warna kuning seperti portal Fortex */
+            background-size: 56.57px 56.57px;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+            background-color: #0073e6;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            text-decoration: none;
+            color: white;
+            background-color: #005bb5;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar a:hover {
+            background-color: #004494;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            background-color: #ffffff;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-container {
+            flex: 1;
+            margin: 0 20px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .header button {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .header button:hover {
+            background-color: #005bb5;
+        }
+        .header-icons {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .header-icons img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 20px;
+            object-fit: cover; /* Menjaga gambar agar tidak terpotong */
+        }
+        .header-icons .notifications,
+        .header-icons .profile {
+            position: relative;
+        }
+        .notifications .notification-list,
+        .profile .profile-card {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 300px; /* Lebar yang lebih besar untuk tampilan lebih modern */
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 10;
+            max-height: 400px; /* Maksimal tinggi yang lebih besar */
+            overflow-y: auto;
+            padding: 15px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        .header-icons .notifications:hover .notification-list,
+        .header-icons .profile:hover .profile-card {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .notification-list .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .notification-list .notification-item:last-child {
+            border-bottom: none;
+        }
+        .notification-list .notification-item:hover {
+            background-color: #f0f4f8;
+        }
+        .notification-list .notification-item img {
+            width: 24px;
+            height: 24px;
+            object-fit: cover; /* Menjaga gambar agar tidak terpotong */
+        }
+        .profile-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 10px auto;
+            object-fit: cover; /* Menjaga gambar agar tidak terpotong */
+        }
+        .profile-card .profile-info {
+            text-align: center;
+        }
+        .profile-card .profile-info h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .profile-card .profile-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .profile-card .profile-info button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: red; /* Ubah warna tombol menjadi merah */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .profile-card .profile-info button:hover {
+            background-color: darkred; /* Warna merah gelap saat hover */
+        }
+        .content {
+            display: flex;
+            padding: 20px;
+            flex: 1;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 60%;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .card img {
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        .card p {
+            margin: 0;
+            color: #333333;
+        }
+        .info {
+            width: 40%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-left: 20px; /* Added space between grid and info */
+        }
+        .info h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <img src="sso_unitomo.png" alt="Unitomo Logo">
+            <a href="#" onmouseover="showInfo('App Catalog', 'Browse the catalog to find new apps.')">App Catalog</a>
+            <a href="#" onmouseover="showInfo('Help/Support', 'Get help and support for any issues.')">Help/Support</a>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <div class="search-container">
+                    <input type="text" placeholder="Search your apps">
+                </div>
+                <button>Search App</button>
+                <div class="header-icons">
+                    <div class="notifications">
+                        <img src="notif.png" alt="Notifications"> <!-- Ganti dengan notif.png -->
+                        <div class="notification-list" id="notification-list">
+                            <div class="notification-item">
+                                <img src="notif.png" alt="Notif Icon"> <!-- Ikon untuk notifikasi -->
+                                <div>
+                                    <strong>Notification 1</strong>
+                                    <p>Details about notification 1.</p>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <img src="notif.png" alt="Notif Icon"> <!-- Ikon untuk notifikasi -->
+                                <div>
+                                    <strong>Notification 2</strong>
+                                    <p>Details about notification 2.</p>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <img src="notif.png" alt="Notif Icon"> <!-- Ikon untuk notifikasi -->
+                                <div>
+                                    <strong>Notification 3</strong>
+                                    <p>Details about notification 3.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile">
+                        <img src="profil.png" alt="Profile"> <!-- Ganti dengan profil.png -->
+                        <div class="profile-card" id="profile-card">
+                            <img src="profil.png" alt="Profile Photo">
+                            <div class="profile-info">
+                                <h3>Niko Hasda Prayogo</h3>
+                                <p>Email: niko@unitomo.ac.id</p>
+                                <p>Role: Admin</p>
+                                <button>Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="grid">
+                    <div class="card" onmouseover="showInfo('SIAKAD', 'SIAKAD is the academic information system.')">
+                        <img src="siakad-logo.png" alt="">
+                        <p>SIAKAD</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('NILAI', 'NILAI is the grading system.')">
+                        <img src="nilai-logo.png" alt="">
+                        <p>NILAI</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('MABA', 'MABA is the new student admission system.')">
+                        <img src="maba-logo.png" alt="">
+                        <p>MABA</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('E-ARSHIP', 'E-ARSHIP is the electronic archive system.')">
+                        <img src="earship-logo.png" alt="">
+                        <p>E-ARSHIP</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('SIPETA', 'SIPETA is the mapping information system.')">
+                        <img src="sipeta-logo.png" alt="">
+                        <p>SIPETA</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('BIMA', 'BIMA is the information management system.')">
+                        <img src="bima-logo.png" alt="">
+                        <p>BIMA</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('LSP', 'LSP is the professional certification body.')">
+                        <img src="lsp-logo.png" alt="">
+                        <p>LSP</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('SIMPEG', 'SIMPEG is the employee information system.')">
+                        <img src="simpeg-logo.png" alt="">
+                        <p>SIMPEG</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('CETAK IJAZAH', 'CETAK IJAZAH is the diploma printing system.')">
+                        <img src="cetak-ijazah-logo.png" alt="">
+                        <p>CETAK IJAZAH</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('E-LEARNING', 'E-LEARNING is the online learning system.')">
+                        <img src="elearning-logo.png" alt="">
+                        <p>E-LEARNING</p>
+                    </div>
+                    <div class="card" onmouseover="showInfo('LIK', 'LIK is the information and library system.')">
+                        <img src="lik-logo.png" alt="">
+                        <p>LIK</p>
+                    </div>
+                </div>
+                <div class="info" id="info">
+                    <h2>Application Info</h2>
+                    <p>Hover over an application to see its details here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showInfo(title, description) {
+            document.getElementById('info').innerHTML = `<h2>${title}</h2><p>${description}</p>`;
+        }
+    </script>
+</body>
+</html>
